@@ -3,6 +3,7 @@
 namespace DotykackaPHPApiClient\Service;
 
 use DotykackaPHPApiClient\Object\ApiProductSaleRequest;
+use DotykackaPHPApiClient\Object\ApiProductSaleResponse;
 use DotykackaPHPApiClient\Object\Supplier;
 use DotykackaPHPApiClient\Object\Warehouse;
 use DotykackaPHPApiClient\Response\Error;
@@ -37,27 +38,25 @@ class StockService extends ServiceBase
     }
 
     /**
-     * @param int      $cloudId
-     * @param Supplier $supplier
+     * Create sale stocklog and update stockstatus of the product
      *
-     * @return Supplier|Error
+     * @param ApiProductSaleRequest $apiProductSaleRequest
+     * @return ApiProductSaleResponse|Error
      */
-    public function createProductSale($cloudId, ApiProductSaleRequest $apiProductSaleRequest)
+    public function createProductSale(ApiProductSaleRequest $apiProductSaleRequest)
     {
         $response = $this->apiClient->sendRequest(
                 'POST',
-                'api/supplier/'.$cloudId.'/create',
+                'api/product/sale',
                 array(),
-                (string) $apiProductSaleRequest
+                $apiProductSaleRequest
         );
 
         if (isset($response['error'])) {
             return new Error($response['error']);
         }
 
-        $responseObject = new Supplier($response);
-
-        return $responseObject;
+        return new ApiProductSaleResponse($response);
     }
 
     /**
